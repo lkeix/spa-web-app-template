@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+  nginx:
+    container_name: "app_name_nginx"
+    build:
+      context: ./nginx
+      dockerfile: ./Dockerfile
+    ports:
+      - 8000:8000
+    depends_on:
+      - frontend
+      - backend
+    logging:
+      driver: none
+  frontend:
+    container_name: "frontend"
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - .:/app
+  backend:
+    container_name: "backend"
+    volumes:
+      - ./src-backend:/go/src/app
+    build:
+      context: ./src-backend
+      dockerfile: ./Dockerfile
+    depends_on:
+      - postgres
+  postgres:
+    build:
+      context: ./db
+      dockerfile: ./Dockerfile
+    ports:
+      - 15432:5432
+    # logging:
+    #  driver: none
